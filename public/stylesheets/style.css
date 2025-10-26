@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+a {
+  color: #00B7FF;
+}
+
+/* Wrapper for the whole About section */
+.about {
+    max-width: 980px;
+    margin: 36px auto;
+    padding: 26px;
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 26px rgba(15, 30, 50, 0.06);
+    color: #222;
+    display: block;
+}
+
+.about-header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Bio text used inside profile/about sections */
+/* Keep a specific selector for .about .bio to avoid surprising overrides */
+.about .bio,
+.bio {
+    margin: 0;
+    color: #333;
+    line-height: 1.6;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    word-wrap: break-word;
+}
+
+/* Small responsive tweak to keep layout readable on narrow screens */
+@media (max-width: 560px) {
+    .about { padding: 18px; margin: 18px; }
+    .about .bio,
+    .bio { font-size: 0.97rem; line-height: 1.5; }
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 4px solid #00B7FF;
+    margin-right: 5%;
+}
+
+footer {
+    text-align: center;
+    padding: 12px;
+    font-size: 0.9rem;
+    color: #777;
+}
