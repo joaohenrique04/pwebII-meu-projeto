@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <style>
+    .error { color: #b00020; font-size: 0.95em; margin-top: 4px; }
+    .field { margin-bottom: 1rem; }
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="number"],
+    .field select,
+    .field textarea { width: 100%; max-width: 520px; padding: 8px; }
+    .hint { color: #555; font-size: .9em; }
+  </style>
+</head>
+<body>
+  <h1><%= title %></h1>
+
+  <form method="post" action="/contato" novalidate>
+    <!-- Nome -->
+    <div class="field">
+      <label for="nome">Nome*</label><br/>
+      <input id="nome" name="nome" type="text" value="<%= data.nome || '' %>" required minlength="3" maxlength="60" />
+      <% if (errors.nome) { %><div class="error"><%= errors.nome.msg %></div><% } %>
+    </div>
+
+    <!-- E-mail -->
+    <div class="field">
+      <label for="email">E-mail*</label><br/>
+      <input id="email" name="email" type="email" value="<%= data.email || '' %>" required />
+      <% if (errors.email) { %><div class="error"><%= errors.email.msg %></div><% } %>
+    </div>
+
+    <!-- Idade (opcional, com intervalo numérico) -->
+    <div class="field">
+      <label for="idade">Idade (opcional)</label><br/>
+      <input id="idade" name="idade" type="number" min="1" max="120" value="<%= (data.idade ?? '') %>"/>
+      <div class="hint">Se informado, deve estar entre 1 e 120.</div>
+      <% if (errors.idade) { %><div class="error"><%= errors.idade.msg %></div><% } %>
+    </div>
+
+    <!-- Select -->
+    <div class="field">
+      <label for="genero">Gênero</label><br/>
+      <select id="genero" name="genero">
+        <option value="" <%= (data.genero === '' ? 'selected' : '') %> >Selecione...</option>
+        <option value="feminino" <%= (data.genero === 'feminino' ? 'selected' : '') %>>Feminino</option>
+        <option value="masculino" <%= (data.genero === 'masculino' ? 'selected' : '') %>>Masculino</option>
+        <option value="nao-binario" <%= (data.genero === 'nao-binario' ? 'selected' : '') %>>Não-binário</option>
+        <option value="prefiro-nao-informar" <%= (data.genero === 'prefiro-nao-informar' ? 'selected' : '') %>>Prefiro não informar</option>
+      </select>
+      <% if (errors.genero) { %><div class="error"><%= errors.genero.msg %></div><% } %>
+    </div>
+
+    <!-- Checkboxes (vários interesses) -->
+    <fieldset class="field">
+      <legend>Interesses</legend>
+      <% const all = ['node','express','ejs','frontend','backend']; %>
+      <% all.forEach(opt => { %>
+        <label style="display:block; margin-bottom: 6px;">
+          <input type="checkbox" name="interesses" value="<%= opt %>"
+            <%= (Array.isArray(data.interesses) && data.interesses.includes(opt)) ? 'checked' : '' %> />
+          <%= opt.toUpperCase() %>
+        </label>
+      <% }) %>
+      <% if (errors.interesses) { %><div class="error"><%= errors.interesses.msg %></div><% } %>
+    </fieldset>
+
+    <!-- Textarea -->
+    <div class="field">
+      <label for="mensagem">Mensagem*</label><br/>
+      <textarea id="mensagem" name="mensagem" rows="5" minlength="10" maxlength="500"><%= data.mensagem || '' %></textarea>
+      <% if (errors.mensagem) { %><div class="error"><%= errors.mensagem.msg %></div><% } %>
+    </div>
+
+    <!-- Checkbox único (aceite) -->
+    <div class="field">
+      <label>
+        <input type="checkbox" name="aceite" <%= data.aceite ? 'checked' : '' %> />
+        Concordo com os termos de uso*
+      </label>
+      <% if (errors.aceite) { %><div class="error"><%= errors.aceite.msg %></div><% } %>
+    </div>
+
+    <button type="submit">Enviar</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <h1>✅ <%= title %></h1>
+  <p>Recebemos seus dados. Obrigado pelo contato!</p>
+
+  <h2>Resumo</h2>
+  <ul>
+    <li><strong>Nome:</strong> <%= data.nome %></li>
+    <li><strong>E-mail:</strong> <%= data.email %></li>
+    <% if (data.idade) { %><li><strong>Idade:</strong> <%= data.idade %></li><% } %>
+    <% if (data.genero) { %><li><strong>Gênero:</strong> <%= data.genero %></li><% } %>
+    <% if (Array.isArray(data.interesses) && data.interesses.length) { %>
+      <li><strong>Interesses:</strong> <%= data.interesses.join(', ') %></li>
+    <% } %>
+    <li><strong>Mensagem:</strong> <%= data.mensagem %></li>
+  </ul>
+
+  <p><a href="/contato">Enviar outro</a> | <a href="/">Voltar à Home</a></p>
+</body>
+</html>

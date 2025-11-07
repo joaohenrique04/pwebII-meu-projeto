@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      font-size: 0.95rem;
+      vertical-align: top;
+    }
+    th {
+      background: #f4f4f4;
+      text-align: left;
+    }
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+    .actions a {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <p><a href="/contato">Novo contato</a> | <a href="/">Home</a></p>
+
+  <% if (!contatos || contatos.length === 0) { %>
+    <p>Nenhum contato cadastrado ainda.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Idade</th>
+          <th>Gênero</th>
+          <th>Interesses</th>
+          <th>Mensagem</th>
+          <th>Criado em</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% contatos.forEach(c => { %>
+          <tr>
+            <td><%= c.id %></td>
+            <td><%= c.nome %></td>
+            <td><%= c.email %></td>
+            <td><%= c.idade || '-' %></td>
+            <td><%= c.genero || '-' %></td>
+            <td>
+              <% if (c.interesses) { %>
+                <%= c.interesses.split(',').join(', ') %>
+              <% } else { %>
+                -
+              <% } %>
+            </td>
+            <td><%= c.mensagem %></td>
+            <td><%= c.criado_em %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</body>
+</html>
