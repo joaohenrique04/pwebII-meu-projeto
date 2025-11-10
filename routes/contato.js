@@ -113,5 +113,22 @@ router.get('/lista', (req, res) => {
     });
   });
   
-  
+// POST /contato/:id/delete – exclui um contato pelo ID
+router.post('/:id/delete', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+
+  if (Number.isNaN(id)) {
+    // ID inválido → só volta
+    return res.redirect('/contato/lista');
+  }
+
+  const info = db.prepare('DELETE FROM contatos WHERE id = ?').run(id);
+
+  // Opcional: você pode testar se algo foi deletado
+  // if (info.changes === 0) { console.log('Nenhum registro com esse ID'); }
+
+  return res.redirect('/contato/lista');
+});
+
+
 module.exports = router;

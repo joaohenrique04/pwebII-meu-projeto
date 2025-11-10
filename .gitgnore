@@ -1,0 +1,16 @@
+# dependências
+node_modules/
+
+# logs e cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
