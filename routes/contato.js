@@ -3,25 +3,7 @@ var router = express.Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../db');
 
-/**
- * GET /contato – exibe o formulário.
- * Enviamos 'data' vazio e 'errors' vazio para facilitar o template.
- */
-
-router.get('/', (req, res) => {
-    res.render('contato', {
-      title: 'Formulário de Contato',
-      data: {},
-      errors: {}
-    });
-  });
-  
-/**
- * POST /contato – valida, sanitiza e decide: erro -> reexibir formulário; sucesso -> página de sucesso
- */
-router.post('/',
-// Validações e sanitizações
-[
+const validacoes = [
     body('nome')
     .trim().isLength({ min: 3, max: 60 }).withMessage('Nome deve ter entre 3 e 60 caracteres.')
     .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/).withMessage('Nome contém caracteres inválidos.')
@@ -48,7 +30,27 @@ router.post('/',
     .escape(),
     body('aceite')
     .equals('on').withMessage('Você deve aceitar os termos para continuar.')
-],
+]
+
+/**
+ * GET /contato – exibe o formulário.
+ * Enviamos 'data' vazio e 'errors' vazio para facilitar o template.
+ */
+
+router.get('/', (req, res) => {
+    res.render('contato', {
+      title: 'Formulário de Contato',
+      data: {},
+      errors: {}
+    });
+  });
+  
+/**
+ * POST /contato – valida, sanitiza e decide: erro -> reexibir formulário; sucesso -> página de sucesso
+ */
+router.post('/',
+// Validações e sanitizações
+validacoes,
 (req, res) => {
     const errors = validationResult(req);
 
@@ -97,6 +99,104 @@ router.post('/',
     });
     
 }
+);
+
+/**
+ * GET /contato/:id/edit – exibe o formulário de edição pré-preenchido
+ */
+router.get('/:id/edit', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (Number.isNaN(id)) {
+    return res.redirect('/contato/lista');
+  }
+
+  // Busca o contato específico no banco
+  const contato = db.prepare('SELECT * FROM contatos WHERE id = ?').get(id);
+
+  if (!contato) {
+    // Não achou? Volta para a lista
+    return res.redirect('/contato/lista');
+  }
+
+  // **Importante:** Seus checkboxes de 'interesses' esperam um array.
+  // No banco, está como string ("node,ejs"). Precisamos converter de volta.
+  const data = {
+    ...contato,
+    interesses: contato.interesses ? contato.interesses.split(',') : [],
+    aceite: contato.aceite === 1 // Converte 1/0 para true/false
+  };
+  
+  res.render('contato', {
+    title: 'Editar Contato',
+    data: data,  // Envia os dados do contato para o template
+    errors: {}   // Sem erros ao carregar
+  });
+});
+
+/**
+ * POST /contato/:id/edit – valida e salva (UPDATE) os dados editados
+ */
+router.post('/:id/edit',
+  // Reutilizamos as MESMAS validações!
+  validacoes,
+  (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      return res.redirect('/contato/lista');
+    }
+
+    const errors = validationResult(req);
+
+    // Prepara os dados do formulário (igual à rota de criação)
+    const data = {
+      id: id, // Importante: mantenha o ID
+      nome: req.body.nome,
+      email: req.body.email,
+      idade: req.body.idade,
+      genero: req.body.genero || '',
+      interesses: req.body.interesses || [],
+      mensagem: req.body.mensagem,
+      aceite: req.body.aceite === 'on'
+    };
+
+    if (!errors.isEmpty()) {
+      // Se houver erros, renderiza o formulário de novo com os erros
+      return res.status(400).render('contato', {
+        title: 'Editar Contato', // Mantém o título de edição
+        data,
+        errors: errors.mapped()
+      });
+    }
+    
+    // Sucesso: salvar (UPDATE) no banco
+    const stmt = db.prepare(`
+      UPDATE contatos
+      SET nome = @nome,
+          email = @email,
+          idade = @idade,
+          genero = @genero,
+          interesses = @interesses,
+          mensagem = @mensagem,
+          aceite = @aceite
+      WHERE id = @id
+    `);
+    
+    stmt.run({
+      id: id, // Passa o ID para o WHERE
+      nome: data.nome,
+      email: data.email,
+      idade: data.idade || null,
+      genero: data.genero || null,
+      interesses: Array.isArray(data.interesses)
+        ? data.interesses.join(',')
+        : (data.interesses || ''),
+      mensagem: data.mensagem,
+      aceite: data.aceite ? 1 : 0
+    });
+    
+    // Depois de atualizar, redireciona para a lista
+    return res.redirect('/contato/lista');
+  }
 );
 
 // GET /contato/lista – tabela com os contatos cadastrados

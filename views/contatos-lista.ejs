@@ -68,8 +68,11 @@
             <td><%= c.mensagem %></td>
             <td><%= c.criado_em %></td>
             <td class="actions">
+              <a href="/contato/<%= c.id %>/edit">Editar</a>
+
               <form action="/contato/<%= c.id %>/delete" method="post"
-                    onsubmit="return confirm('Tem certeza que deseja excluir o contato <%= c.nome %>?');">
+                    onsubmit="return confirm('Tem certeza que deseja excluir o contato <%= c.nome %>?');"
+                    style="display: inline;">
                 <button type="submit">Excluir</button>
               </form>
             </td>
